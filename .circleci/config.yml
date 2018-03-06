@@ -1,0 +1,15 @@
+version: 2
+
+jobs:
+  build:
+    macos:
+      xcode: "9.2.0"
+    steps:
+      - checkout
+      - run: bundle install --path .bundle
+      - run:
+          name: Install CocoaPods
+          command: |
+            curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
+            pod install
+      - run: bundle exec fastlane release
