@@ -819,11 +819,13 @@ NSString *const VLCPlaybackServicePlaybackPositionUpdated = @"VLCPlaybackService
 
 - (BOOL)previous
 {
-    if (_mediaList.count > 1) {
+    NSNumber *playedTime = [[[VLCPlaybackService sharedInstance] playedTime] value];
+
+    // If time played is <2 seconds skip to previous track, otherwise rewind to start of track
+    if (playedTime.intValue < 2000 || playedTime == (id)[NSNull class]) {
         [_listPlayer previous];
         [[NSNotificationCenter defaultCenter] postNotificationName:VLCPlaybackServicePlaybackMetadataDidChange object:self];
-    }
-    else {
+    } else {
         NSNumber *skipLength = [[NSUserDefaults standardUserDefaults] valueForKey:kVLCSettingPlaybackBackwardSkipLength];
         [_mediaPlayer jumpBackward:skipLength.intValue];
     }
